@@ -1,0 +1,27 @@
+name: Build APK
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: unzip -q project.zip -d proj
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+      - run: cd proj && gradle assembleDebug --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MyDiary-APK
+          path: proj/app/build/outputs/apk/debug/app-debug.apk
+      - run: gh release create "v${{ github.run_number }}" proj/app/build/outputs/apk/debug/app-debug.apk --title "My diary build ${{ github.run_number }}" --notes "My diary APK"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

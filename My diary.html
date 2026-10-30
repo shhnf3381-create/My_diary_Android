@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My diary</title>
+<style>
+:root{--bg:#f6f4ef;--cd:#fff;--tx:#1d2b2a;--mu:#6b7776;--ac:#0f766e;--a2:#e6f2f0;--bd:#e3e0d8;--dn:#b42318;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1716;--cd:#18221f;--tx:#e8efed;--mu:#97a5a2;--ac:#3cc4b4;--a2:#1b2f2c;--bd:#2a3835;--dn:#ff8a7a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1716;--cd:#18221f;--tx:#e8efed;--mu:#97a5a2;--ac:#3cc4b4;--a2:#1b2f2c;--bd:#2a3835;--dn:#ff8a7a;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--cd);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--cd);border-bottom:1px solid var(--bd);padding:8px 12px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:19px;margin:0;color:var(--ac)}
+.ib{background:var(--a2);color:var(--ac);border:0;border-radius:10px;padding:6px 10px;font:inherit;font-size:14px;cursor:pointer}
+nav{display:flex;gap:6px;margin-top:8px;overflow-x:auto}
+nav button{flex:1 0 auto;border:0;background:transparent;color:var(--mu);padding:8px 10px;border-radius:10px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ac);color:var(--bg)}
+main{max-width:640px;margin:0 auto;padding:14px 12px 28px}
+.c{background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.c h2{font-size:16px;margin:0 0 10px}
+input,select,textarea{width:100%;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px;margin-bottom:8px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.b{background:var(--ac);color:var(--bg);border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer}
+.g{background:var(--a2);color:var(--ac)}.d{background:transparent;color:var(--dn);padding:6px 8px}
+.row{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--bd)}
+.row:first-of-type{border-top:0}.row .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.row.dn .t{text-decoration:line-through;color:var(--mu)}
+.s{font-size:13px;color:var(--mu)}.od{color:var(--dn)}
+.ring{display:flex;flex-direction:column;align-items:center}
+.ring svg{width:170px;height:170px}.ring text{font-size:26px;font-weight:700;fill:var(--tx)}
+a{color:var(--ac);overflow-wrap:anywhere}
+.im{display:block;max-width:100%;border-radius:10px;margin-top:6px;cursor:zoom-in}#zm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30;align-items:center;justify-content:center;padding:10px}#zm img{max-width:100%;max-height:100%}
+footer{text-align:center;color:var(--mu);font-size:13px;padding:6px 0 18px}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--tx);color:var(--bg);padding:10px 14px;border-radius:12px;display:none;z-index:20}
+</style></head><body>
+<header><div class="top"><h1>My diary</h1><div><button class="ib" data-a="notif" id="bn"></button> <button class="ib" data-a="theme" id="bt"></button> <button class="ib" data-a="lang" id="bl"></button></div></div><nav id="nav"></nav></header>
+<main id="m"></main>
+<footer>Developed by BADR EDDIN LEMMOUCHI</footer>
+<div id="zm" data-a="zclose"></div>
+<div id="toast" role="status"></div>
+<script>
+"use strict";
+const KEY="mydiary.v1";
+const T={ar:{home:"الرئيسية",tasks:"المهام",sched:"الجدول",refs:"المراجع",ideas:"الأفكار",prog:"نسبة إنجاز المذكرة",done:"مكتملة",of:"من",today:"مهام اليوم",none:"لا يوجد شيء هنا بعد",title:"عنوان المهمة",date:"التاريخ",time:"الوقت",rep:"التكرار",r0:"مرة واحدة",r1:"كل يوم",r2:"كل أسبوع",times:"عدد المرات",add:"إضافة",save:"حفظ التعديل",edit:"تعديل",del:"حذف",sure:"تأكيد؟",name:"اسم المرجع",url:"الرابط",open:"فتح",bad:"رابط غير صالح",need:"أدخل عنوانا أولا",deadline:"موعد تسليم المذكرة",left:"يوم متبقٍ",over:"انتهى الموعد",idea:"اكتب فكرتك بسرعة...",sum:"لخّص أفكاري",sumt:"ملخص أفكاري",words:"كلمة",key:"أهم الكلمات",nt:"التنبيهات: تعمل",nf:"فعّل التنبيهات",nd:"التنبيهات محظورة من إعدادات المتصفح",nn:"المتصفح لا يدعم التنبيهات",due:"حان وقت المهمة",od:"متأخرة",test:"هذا اختبار للتنبيه",newt:"مهام جديدة",heads:"العناوين",hti:"العنوان الذي وجدته",href:"المرجع (اختر أو اكتب)",hnote:"ماذا وجدت فيه؟ مثلاً: وجدت فيه كذا وكذا",himg:"إضافة صورة العنوان",hsearch:"ابحث في العناوين...",full:"المساحة ممتلئة ولم يتم الحفظ، احذف صوراً قديمة",badimg:"تعذر قراءة الصورة",hlink:"رابط (اختياري)",snd:"صوت الإشعار",play:"تجربة الصوت"},
+en:{home:"Home",tasks:"Tasks",sched:"Schedule",refs:"References",ideas:"Ideas",prog:"Thesis progress",done:"done",of:"of",today:"Today",none:"Nothing here yet",title:"Task title",date:"Date",time:"Time",rep:"Repeat",r0:"Once",r1:"Daily",r2:"Weekly",times:"Times",add:"Add",save:"Save changes",edit:"Edit",del:"Delete",sure:"Sure?",name:"Reference name",url:"Link",open:"Open",bad:"Invalid link",need:"Enter a title first",deadline:"Thesis deadline",left:"days left",over:"Deadline passed",idea:"Jot an idea...",sum:"Summarize my ideas",sumt:"My ideas summary",words:"words",key:"Top words",nt:"Notifications: on",nf:"Enable notifications",nd:"Notifications are blocked in browser settings",nn:"Notifications are not supported",due:"Task is due",od:"Overdue",test:"This is a test notification",newt:"New tasks",heads:"Headings",hti:"Heading you found",href:"Reference (pick or type)",hnote:"What did you find in it?",himg:"Add heading image",hsearch:"Search headings...",full:"Storage is full, not saved. Delete old images",badimg:"Could not read the image",hlink:"Link (optional)",snd:"Notification sound",play:"Play sound"}};
+let S,tab="home",editId=null,armed=null,sumHtml="",editHead=null,pendImg="",hq="";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const t=k=>T[S.lang][k]||k;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function load(){let o=null;try{o=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+ S=Object.assign({tasks:[],refs:[],ideas:[],heads:[],deadline:"",lang:"ar",theme:""},o&&typeof o==="object"?o:{});
+ ["tasks","refs","ideas","heads"].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});
+ if(S.lang!=="en")S.lang="ar"}
+function save(){let ok=true;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){ok=false}sync();return ok}
+function sync(){try{if(window.Android)Android.sync(JSON.stringify(S.tasks.filter(x=>!x.done&&validDate(x.date)).map(x=>({id:x.id,title:x.title,at:dueMs(x)}))))}catch(e){}}
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayS=()=>ymd(new Date());
+function addDays(s,n){const p=s.split("-").map(Number);return ymd(new Date(p[0],p[1]-1,p[2]+n))}
+const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||"");
+const dueMs=x=>new Date(x.date+"T"+(x.time||"09:00")).getTime();
+const loc=()=>S.lang==="ar"?"ar":"en-GB";
+function toast(m){const e=$("#toast");e.textContent=m;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",3500)}
+function pct(){const n=S.tasks.length;return n?Math.round(S.tasks.filter(x=>x.done).length/n*100):0}
+function taskRow(x,show){const od=!x.done&&validDate(x.date)&&dueMs(x)<Date.now();
+ return '<div class="row'+(x.done?" dn":"")+'"><input type="checkbox" style="width:22px;margin:0" data-a="tog" data-id="'+esc(x.id)+'"'+(x.done?" checked":"")+'><div class="t">'+esc(x.title)+'<div class="s'+(od?" od":"")+'">'+esc(x.date||"")+(x.time?" · "+esc(x.time):"")+(od?" · "+t("od"):"")+'</div></div>'+(show?'<button class="b g" data-a="edit" data-id="'+esc(x.id)+'">'+t("edit")+'</button>':"")+delBtn("task",x.id)+'</div>'}
+function delBtn(k,id){const a=armed===k+id;return '<button class="b d" data-a="del" data-k="'+k+'" data-id="'+esc(id)+'">'+(a?t("sure"):t("del"))+'</button>'}
+const SND=[["default","نغمة النظام","System tone"],["alarm","منبه النظام","System alarm"],["chime","رنين ناعم","Soft chime"],["bell","جرس","Bell"],["beep","ثلاث نقرات","Triple beep"],["rise","لحن صاعد","Rising melody"],["drop","نقرتان هابطتان","Falling tap"]];
+function soundCard(){if(!window.Android)return "";let cur="default";try{cur=Android.getSound()}catch(e){}
+ return '<div class="c"><h2>'+t("snd")+'</h2><select id="sn">'+SND.map(x=>'<option value="'+x[0]+'"'+(x[0]===cur?" selected":"")+'>'+(S.lang==="ar"?x[1]:x[2])+'</option>').join("")+'</select><button class="b g" data-a="playSnd">▶ '+t("play")+'</button></div>'}
+function vHome(){const p=pct(),C=326.7,n=S.tasks.length,dn=S.tasks.filter(x=>x.done).length;
+ const td=S.tasks.filter(x=>x.date===todayS()).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+ let dl="";if(validDate(S.deadline)){const a=new Date(S.deadline+"T00:00"),b=new Date(todayS()+"T00:00");const d=Math.round((a-b)/864e5);dl=d>=0?'<b style="font-size:28px">'+d+'</b> '+t("left"):'<span class="od">'+t("over")+'</span>'}
+ return '<div class="c ring"><h2>'+t("prog")+'</h2><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--a2)" stroke-width="12"/><circle cx="60" cy="60" r="52" fill="none" stroke="var(--ac)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-p/100)).toFixed(1)+'" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle">'+p+'%</text></svg><div class="s">'+dn+' '+t("of")+' '+n+' · '+t("done")+'</div></div>'+
+ '<div class="c"><h2>'+t("deadline")+'</h2><div>'+dl+'</div><input type="date" id="dl" value="'+esc(S.deadline)+'" data-a="dl"></div>'+
+ soundCard()+'<div class="c"><h2>'+t("today")+'</h2>'+(td.length?td.map(x=>taskRow(x,false)).join(""):'<div class="s">'+t("none")+'</div>')+'</div>'}
+function vTasks(){const e=S.tasks.find(x=>x.id===editId);
+ const list=S.tasks.slice().sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")));
+ return '<div class="c"><input id="ti" maxlength="200" placeholder="'+t("title")+'" value="'+esc(e?e.title:"")+'"><div class="r2"><div><label class="s">'+t("date")+'</label><input type="date" id="da" value="'+esc(e?e.date:todayS())+'"></div><div><label class="s">'+t("time")+'</label><input type="time" id="tm" value="'+esc(e?e.time||"":"")+'"></div></div>'+
+ (e?"":'<div class="r2"><div><label class="s">'+t("rep")+'</label><select id="rp"><option value="0">'+t("r0")+'</option><option value="1">'+t("r1")+'</option><option value="2">'+t("r2")+'</option></select></div><div><label class="s">'+t("times")+'</label><input type="number" id="nt" min="1" max="365" value="1"></div></div>')+
+ '<button class="b" data-a="saveTask">'+(e?t("save"):t("add"))+'</button></div><div class="c">'+(list.length?list.map(x=>taskRow(x,true)).join(""):'<div class="s">'+t("none")+'</div>')+'</div>'}
+function vSched(){if(!S.tasks.length)return '<div class="c s">'+t("none")+'</div>';const g={};
+ S.tasks.slice().sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||""))).forEach(x=>{(g[x.date]=g[x.date]||[]).push(x)});
+ return Object.keys(g).map(d=>{let h=d;try{h=new Date(d+"T00:00").toLocaleDateString(loc(),{weekday:"long",day:"numeric",month:"long",year:"numeric"})}catch(e){}
+  return '<div class="c"><h2>'+esc(h)+'</h2>'+g[d].map(x=>taskRow(x,false)).join("")+'</div>'}).join("")}
+function vRefs(){return '<div class="c"><input id="rn" maxlength="120" placeholder="'+t("name")+'"><input id="ru" dir="ltr" inputmode="url" placeholder="'+t("url")+'"><button class="b" data-a="addRef">'+t("add")+'</button></div><div class="c">'+(S.refs.length?S.refs.map(r=>'<div class="row"><div class="t"><a href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer">'+esc(r.name)+'</a><div class="s" dir="ltr">'+esc(r.url)+'</div></div><a class="b g" style="text-decoration:none" href="'+esc(r.url)+'" target="_blank" rel="noopener noreferrer">'+t("open")+'</a>'+delBtn("ref",r.id)+'</div>').join(""):'<div class="s">'+t("none")+'</div>')+'</div>'}
+function vIdeas(){return '<div class="c"><textarea id="id" rows="3" maxlength="2000" placeholder="'+t("idea")+'"></textarea><button class="b" data-a="addIdea">'+t("add")+'</button> <button class="b g" data-a="sum">'+t("sum")+'</button></div>'+(sumHtml?'<div class="c"><h2>'+t("sumt")+'</h2>'+sumHtml+'</div>':"")+'<div class="c">'+(S.ideas.length?S.ideas.slice().reverse().map(i=>'<div class="row"><div class="t">'+esc(i.text)+'<div class="s">'+esc(i.at)+'</div></div>'+delBtn("idea",i.id)+'</div>').join(""):'<div class="s">'+t("none")+'</div>')+'</div>'}
+const okLink=s=>typeof s==="string"&&/^https?:\/\//i.test(s);
+const okImg=s=>typeof s==="string"&&s.indexOf("data:image/jpeg;base64,")===0;
+function headCard(h){return '<div class="row" style="align-items:flex-start"><div class="t"><b>'+esc(h.title)+'</b>'+(h.ref?'<div class="s">📖 '+esc(h.ref)+'</div>':"")+(h.note?'<div style="white-space:pre-wrap">'+esc(h.note)+'</div>':"")+(okLink(h.link)?'<div class="s" dir="ltr"><a href="'+esc(h.link)+'" target="_blank" rel="noopener noreferrer">'+esc(h.link)+'</a></div>':"")+(okImg(h.img)?'<img class="im" data-a="zoom" data-id="'+esc(h.id)+'" src="'+h.img+'">':"")+'<div class="s">'+esc(h.at||"")+'</div></div><div>'+(okLink(h.link)?'<a class="b g" style="text-decoration:none;display:inline-block" href="'+esc(h.link)+'" target="_blank" rel="noopener noreferrer">'+t("open")+'</a> ':"")+'<button class="b g" data-a="editHead" data-id="'+esc(h.id)+'">'+t("edit")+'</button>'+delBtn("head",h.id)+'</div></div>'}
+function headList(){const q=hq.trim().toLowerCase();const l=S.heads.slice().reverse().filter(h=>!q||(h.title+" "+h.ref+" "+h.note+" "+(h.link||"")).toLowerCase().indexOf(q)>=0);return l.length?l.map(headCard).join(""):'<div class="s">'+t("none")+'</div>'}
+function vHeads(){const e=S.heads.find(x=>x.id===editHead);const has=okImg(pendImg);
+ return '<div class="c"><input id="hti" maxlength="200" placeholder="'+t("hti")+'" value="'+esc(e?e.title:"")+'"><input id="hrf" list="rl" maxlength="200" placeholder="'+t("href")+'" value="'+esc(e?e.ref:"")+'"><datalist id="rl">'+S.refs.map(r=>'<option value="'+esc(r.name)+'">').join("")+'</datalist><input id="hlk" dir="ltr" inputmode="url" maxlength="500" placeholder="'+t("hlink")+'" value="'+esc(e&&e.link?e.link:"")+'"><textarea id="hnt" rows="4" maxlength="3000" placeholder="'+t("hnote")+'">'+esc(e?e.note:"")+'</textarea><input type="file" id="hf" accept="image/*" hidden><button class="b g" data-a="pickimg">📷 '+t("himg")+'</button> <button class="b d" data-a="rmimg">'+t("del")+' 🖼</button><img id="hp" class="im" style="display:'+(has?"block":"none")+'"'+(has?' src="'+pendImg+'"':"")+'><button class="b" style="margin-top:10px" data-a="saveHead">'+(e?t("save"):t("add"))+'</button></div><div class="c"><input id="hs" placeholder="'+t("hsearch")+'" value="'+esc(hq)+'"><div id="hl">'+headList()+'</div></div>'}
+function pickImg(f){if(!f||!/^image\//.test(f.type))return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);pendImg=c.toDataURL("image/jpeg",0.65);const p=$("#hp");if(p){p.src=pendImg;p.style.display="block"}};im.onerror=()=>toast(t("badimg"));im.src=r.result};r.onerror=()=>toast(t("badimg"));r.readAsDataURL(f)}
+function chrome(){const L=S.lang;document.documentElement.lang=L;document.documentElement.dir=L==="ar"?"rtl":"ltr";
+ if(S.theme)document.documentElement.setAttribute("data-theme",S.theme);else document.documentElement.removeAttribute("data-theme");
+ $("#bl").textContent=L==="ar"?"EN":"عربي";$("#bt").textContent=isDark()?"☀":"☾";
+ let p="na";try{p=window.Android?(Android.notifOn()?"granted":"default"):(("Notification" in window)?Notification.permission:"na")}catch(e){}$("#bn").textContent=p==="granted"?"🔔":"🔕";$("#bn").title=p==="granted"?t("nt"):t("nf");
+ $("#nav").innerHTML=["home","tasks","sched","refs","heads","ideas"].map(k=>'<button data-a="tab" data-v="'+k+'" class="'+(k===tab?"on":"")+'">'+t(k)+'</button>').join("")}
+const isDark=()=>S.theme?S.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+function render(){chrome();$("#m").innerHTML={home:vHome,tasks:vTasks,sched:vSched,refs:vRefs,heads:vHeads,ideas:vIdeas}[tab]()}
+function normUrl(u){u=String(u||"").trim();if(!u)return null;if(!/^[a-z][a-z0-9+.-]*:/i.test(u))u="https://"+u;try{const x=new URL(u);return(x.protocol==="https:"||x.protocol==="http:")&&x.hostname.includes(".")?x.href:null}catch(e){return null}}
+function summarize(){if(!S.ideas.length){sumHtml="";return}const all=S.ideas.map(i=>i.text).join(" ");const w=all.split(/\s+/).filter(Boolean);
+ const stop=new Set("this that with from have been were will your which their about there what when then than into also هذا هذه التي الذي على إلى عن مع كان كانت أن إن ما لا في من".split(" "));const f={};
+ (all.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu)||[]).forEach(x=>{if(!stop.has(x))f[x]=(f[x]||0)+1});
+ const top=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,6).map(x=>x[0]);
+ sumHtml='<div class="s">'+S.ideas.length+' · '+w.length+' '+t("words")+'</div>'+(top.length?'<p><b>'+t("key")+':</b> '+top.map(esc).join("، ")+'</p>':"")+'<ul>'+S.ideas.slice(-8).map(i=>'<li>'+esc((i.text.split(/[.!?؟\n]/)[0]||i.text).slice(0,90))+'</li>').join("")+'</ul>'}
+async function askNotif(){if(window.Android){try{Android.askNotif()}catch(e){}return}if(!("Notification" in window)){toast(t("nn"));return}
+ if(Notification.permission==="granted"){fire(t("test"));return}
+ if(Notification.permission==="denied"){toast(t("nd"));return}
+ try{const r=await Notification.requestPermission();if(r==="granted")fire(t("test"));else toast(t("nd"))}catch(e){toast(t("nn"))}render()}
+function fire(m){toast(m);try{if("Notification" in window&&Notification.permission==="granted")new Notification("My diary",{body:m})}catch(e){}}
+function tick(){if(window.Android)return;const n=Date.now();let ch=false;S.tasks.forEach(x=>{if(!x.done&&!x.notified&&validDate(x.date)){const d=dueMs(x);if(d<=n&&n-d<864e5){x.notified=true;ch=true;fire(t("due")+": "+x.title)}}});if(ch){save();render()}}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-a]");if(!el)return;const a=el.dataset.a,id=el.dataset.id;
+ if(a==="tab"){tab=el.dataset.v;editId=null;editHead=null;pendImg="";hq="";render();return}
+ if(a==="lang"){S.lang=S.lang==="ar"?"en":"ar";sumHtml="";save();render();return}
+ if(a==="theme"){S.theme=isDark()?"light":"dark";save();render();return}
+ if(a==="notif"){askNotif();return}
+ if(a==="tog"){const x=S.tasks.find(v=>v.id===id);if(x){x.done=!x.done;save();render()}return}
+ if(a==="edit"){editId=id;render();window.scrollTo(0,0);return}
+ if(a==="del"){const k=el.dataset.k,key=k+id;if(armed!==key){armed=key;render();clearTimeout(del_h);del_h=setTimeout(()=>{armed=null;render()},3000);return}
+  armed=null;const m={task:"tasks",ref:"refs",idea:"ideas",head:"heads"}[k];if(k==="head"&&editHead===id){editHead=null;pendImg=""}S[m]=S[m].filter(v=>v.id!==id);if(k==="task"&&editId===id)editId=null;if(k==="idea")sumHtml="";save();render();return}
+ if(a==="saveTask"){const ti=$("#ti").value.trim(),da=$("#da").value,tm=$("#tm").value;if(!ti){toast(t("need"));return}
+  const d=validDate(da)?da:todayS();
+  if(editId){const x=S.tasks.find(v=>v.id===editId);if(x){x.title=ti.slice(0,200);x.date=d;x.time=tm;x.notified=false}editId=null}
+  else{const rp=+$("#rp").value||0,nt=Math.max(1,Math.min(365,parseInt($("#nt").value,10)||1)),step=rp===1?1:7,cnt=rp?nt:1;
+   for(let i=0;i<cnt;i++)S.tasks.push({id:uid(),title:ti.slice(0,200),date:addDays(d,i*step),time:tm,done:false,notified:false});toast(t("newt")+": "+cnt)}
+  save();render();return}
+ if(a==="addRef"){const n=$("#rn").value.trim(),u=normUrl($("#ru").value);if(!u){toast(t("bad"));return}S.refs.push({id:uid(),name:(n||u).slice(0,120),url:u});save();render();return}
+ if(a==="addIdea"){const v=$("#id").value.trim();if(!v)return;S.ideas.push({id:uid(),text:v.slice(0,2000),at:new Date().toLocaleString(loc())});sumHtml="";save();render();return}
+ if(a==="playSnd"){try{Android.playSound($("#sn").value)}catch(e){}return}
+ if(a==="pickimg"){const f=$("#hf");if(f)f.click();return}
+ if(a==="rmimg"){pendImg="";const p=$("#hp");if(p)p.style.display="none";return}
+ if(a==="saveHead"){const ht=$("#hti").value.trim();if(!ht){toast(t("need"));return}
+  const lk=$("#hlk").value.trim();let hl="";if(lk){hl=normUrl(lk);if(!hl){toast(t("bad"));return}}
+  const ho={link:hl,title:ht.slice(0,200),ref:$("#hrf").value.trim().slice(0,200),note:$("#hnt").value.trim().slice(0,3000),img:pendImg||""};
+  if(editHead){const hh=S.heads.find(v=>v.id===editHead);if(hh){const old=Object.assign({},hh);Object.assign(hh,ho);if(!save()){Object.assign(hh,old);toast(t("full"));return}}editHead=null}
+  else{const hn=Object.assign({id:uid(),at:new Date().toLocaleString(loc())},ho);S.heads.push(hn);if(!save()){S.heads.pop();toast(t("full"));return}}
+  pendImg="";render();return}
+ if(a==="editHead"){editHead=id;const he=S.heads.find(v=>v.id===id);pendImg=he?he.img:"";render();window.scrollTo(0,0);return}
+ if(a==="zoom"){const hz=S.heads.find(v=>v.id===id);if(hz&&okImg(hz.img)){const z=$("#zm");z.innerHTML='<img alt="">';z.firstChild.src=hz.img;z.style.display="flex"}return}
+ if(a==="zclose"){const z=$("#zm");z.style.display="none";z.innerHTML="";return}
+ if(a==="sum"){summarize();render();return}});
+let del_h;
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="hf"){pickImg(e.target.files&&e.target.files[0]);e.target.value=""}});
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="sn"){try{Android.setSound(e.target.value);Android.playSound(e.target.value)}catch(x){}}});
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="hs"){hq=e.target.value;const l=$("#hl");if(l)l.innerHTML=headList()}});
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.a==="dl"){S.deadline=validDate(e.target.value)?e.target.value:"";save();render()}});
+load();render();sync();tick();setInterval(tick,15000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick()});
+</script></body></html>

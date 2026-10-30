@@ -9,7 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -q project.zip -d proj
+        with:
+          fetch-depth: 0
+      - name: Unzip newest project zip
+        run: |
+          Z=""; T=0
+          for f in project*.zip; do
+            t=$(git log -1 --format=%ct -- "$f")
+            if [ "$t" -gt "$T" ]; then T=$t; Z="$f"; fi
+          done
+          echo "Using: $Z"
+          unzip -q "$Z" -d proj
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
